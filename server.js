@@ -1,5 +1,5 @@
 const express = require('express');
-const bodyParser = require('body-parser');
+const bodyParser = require('body-parser');  // you can remove this if unused
 const mongoose = require('mongoose');
 const path = require('path');
 
@@ -7,40 +7,40 @@ const path = require('path');
 let index = require('./routes/index');
 let image = require('./routes/image');
 
-// connecting the database
-let mongodb_url = 'mongodb://localhost:27017/';
-let dbName = 'darkroom';
-mongoose.connect(`${mongodb_url}${dbName}`,{ useNewUrlParser: true , useUnifiedTopology: true }, (err)=>{
-    if (err) console.log(err)
-});
+// MongoDB Atlas connection
+const dbURI = 'mongodb+srv://Edwinkorir38:Hakuna123@cluster0.qzalcrk.mongodb.net/darkroom?retryWrites=true&w=majority&appName=Cluster0';
 
-// test if the database has connected successfully
+mongoose.connect(dbURI, { 
+  useNewUrlParser: true, 
+  useUnifiedTopology: true 
+})
+.then(() => console.log('✅ Connected to MongoDB Atlas'))
+.catch(err => console.error('❌ MongoDB connection error:', err));
+
+// Test if the database has connected successfully
 let db = mongoose.connection;
 db.once('open', ()=>{
-    console.log('Database connected successfully')
-})
+    console.log('Database connected successfully');
+});
 
-// Initializing the app
+// Initialize the app
 const app = express();
-
 
 // View Engine
 app.set('view engine', 'ejs');
 
-// Set up the public folder;
+// Public folder
 app.use(express.static(path.join(__dirname, 'public')));
 
-// body parser middleware
-app.use(express.json())
+// Body parser
+app.use(express.json());
 
-
+// Routes
 app.use('/', index);
 app.use('/image', image);
 
-
-
- 
+// Start server
 const PORT = process.env.PORT || 5000;
-app.listen(PORT,() =>{
-    console.log(`Server is listening at http://localhost:${PORT}`)
+app.listen(PORT, () =>{
+    console.log(`🚀 Server is running at http://localhost:${PORT}`);
 });
