@@ -1,39 +1,42 @@
-require('dotenv').config(); // Load environment variables from .env
+// server.js
+require('dotenv').config(); // Load environment variables
 
 const express = require('express');
 const mongoose = require('mongoose');
 const path = require('path');
+const config = require('./_config'); // updated to match your file name
 
-// Define routes
-let index = require('./routes/index');
-let image = require('./routes/image');
+// Import routes
+const index = require('./routes/index');
+const image = require('./routes/image');
 
-// MongoDB Atlas connection from .env
-const dbURI = process.env.MONGO_URI;
-
-mongoose.connect(dbURI, { 
-  useNewUrlParser: true, 
-  useUnifiedTopology: true 
-})
-.then(() => console.log('✅ Connected to MongoDB Atlas'))
-.catch(err => console.error('❌ MongoDB connection error:', err));
-
-// Test connection
-let db = mongoose.connection;
-db.once('open', () => {
-  console.log('Database connected successfully');
-});
-
-// Initialize the app
+// Initialize app
 const app = express();
 
-// View Engine
+// Environment (development / production / test)
+const env = process.env.NODE_ENV || 'development';
+
+// Connect to MongoDB
+mongoose.connect(config.mongoURI[env], {
+    useNewUrlParser: true,
+    useUnifiedTopology: true
+})
+.then(() => console.log(`Connected to MongoDB (${env})`))
+.catch(err => console.error('MongoDB connection error:', err));
+
+// Test connection
+const db = mongoose.connection;
+db.once('open', () => {
+    console.log('Database connection is open');
+});
+
+// View engine
 app.set('view engine', 'ejs');
 
-// Public folder
+// Static folder
 app.use(express.static(path.join(__dirname, 'public')));
 
-// Body parser (built-in with Express)
+// Body parsing
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
@@ -42,7 +45,6 @@ app.use('/', index);
 app.use('/image', image);
 
 // Start server
-const PORT = process.env.PORT || 5000;
-app.listen(PORT, () => {
-  console.log(`🚀 Server is running at http://localhost:${PORT}`);
+app.listen(config.port, () => {
+    console.log(`Server running on port ${config.port}`);
 });
