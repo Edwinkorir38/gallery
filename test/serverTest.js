@@ -1,4 +1,5 @@
 process.env.NODE_ENV = 'test';
+process.env.NODE_ENV = 'test';
 
 const chai = require('chai');
 const chaiHttp = require('chai-http');
@@ -8,6 +9,7 @@ const should = chai.should();
 const expect = chai.expect;
 
 chai.use(chaiHttp);
+var should = chai.should();
 
 describe('Photos', function () {
   it('should load the home page on / GET', function (done) {
