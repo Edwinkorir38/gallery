@@ -43,7 +43,14 @@ pipeline {
 
         stage('Run Tests') {
             steps {
-                sh 'npm test || echo " No tests implemented yet"'
+                script {
+                    try {
+                        sh 'npm test'
+                    } catch (err) {
+                        echo " Tests failed!"
+                        error("Stopping pipeline because tests failed.")
+                    }
+                }
             }
         }
 
@@ -65,7 +72,7 @@ pipeline {
 
     post {
         success {
-            echo " CI pipeline completed successfully!"
+            echo "CI pipeline completed successfully!"
         }
         failure {
             echo " Pipeline failed!"

@@ -15,8 +15,8 @@ const app = express();
 // Connect to database
 const MONGODB_URI = process.env.MONGODB_URI || config.mongoURI[app.settings.env];
 mongoose.connect(MONGODB_URI, { useNewUrlParser: true, useUnifiedTopology: true })
-  .then(() => console.log(`✅ Connected to Database: ${MONGODB_URI}`))
-  .catch(err => console.error('❌ DB Connection Error:', err));
+  .then(() => console.log(`Connected to Database: ${MONGODB_URI}`))
+  .catch(err => console.error('DB Connection Error:', err));
 
 // View engine
 app.set('view engine', 'ejs');
