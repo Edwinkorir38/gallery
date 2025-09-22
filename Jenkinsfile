@@ -29,17 +29,19 @@ pipeline {
             steps {
                 script {
                     echo "Env variables injected."
-                    echo " Current environment: PRODUCTION"
-                    echo "Using Mongo URI (not printed for security)"
-                    // You can use this inside your test scripts
+                    echo "Current environment: PRODUCTION (default)"
+                    echo "Mongo URIs are set (hidden for security)."
                 }
             }
         }
 
         stage('Run Tests') {
+            environment {
+                NODE_ENV = 'test'
+                MONGO_URI = "${MONGO_URI_TEST}"
+            }
             steps {
-                echo "No tests implemented yet"
-                // In future: sh 'npm test'
+                sh 'npm test'
             }
         }
 
