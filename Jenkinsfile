@@ -40,7 +40,7 @@ pipeline {
 
         stage('Start Server') {
             steps {
-                echo "Skipping start during CI - Render will handle deployment"
+                echo "Skipping start during CI - Railway will handle deployment"
             }
         }
     }
@@ -71,7 +71,7 @@ pipeline {
                         },
                         {
                           "title": "Deployed To",
-                          "value": "<https://dashboard.render.com/web/new?newUser=true|Render Dashboard>",
+                          "value": "<https://web-production-72cbb.up.railway.app/|Railway Deployment>",
                           "short": false
                         }
                       ]
