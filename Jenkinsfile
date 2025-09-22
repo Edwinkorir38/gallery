@@ -50,7 +50,8 @@ pipeline {
             echo " CI pipeline completed successfully!"
 
             script {
-                def slackMessage = """
+                // Write Slack message JSON to a file
+                writeFile file: 'slack_message.json', text: """
                 {
                   "attachments": [
                     {
@@ -79,10 +80,9 @@ pipeline {
                 }
                 """
 
+                // Post the message file with curl, securely using the webhook URL
                 sh """
-                    curl -X POST -H 'Content-type: application/json' \
-                    --data '${slackMessage}' \
-                    ${env.SLACK_WEBHOOK_URL}
+                    curl -X POST -H 'Content-type: application/json' --data @slack_message.json ${env.SLACK_WEBHOOK_URL}
                 """
             }
         }
