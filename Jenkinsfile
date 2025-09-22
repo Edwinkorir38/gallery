@@ -46,10 +46,28 @@ pipeline {
 
     post {
         success {
-            echo "✅ CI pipeline completed successfully!"
+            echo " CI pipeline completed successfully!"
         }
         failure {
-            echo "❌ Pipeline failed!"
+            echo "Pipeline failed!"
+
+            // Email notification on failure
+            mail to: 'ekorir99@gmail.com',
+                 subject: " Jenkins Pipeline Failed - Gallery Project",
+                 body: """\
+Hi Team,
+
+The Jenkins pipeline has failed during execution.
+
+ Job: ${env.JOB_NAME}
+ Build: #${env.BUILD_NUMBER}
+ URL: ${env.BUILD_URL}
+
+Please check the logs and fix the issue.
+
+Regards,
+Jenkins Bot
+"""
         }
     }
 }
