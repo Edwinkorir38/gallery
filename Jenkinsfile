@@ -8,6 +8,7 @@ pipeline {
     environment {
         NODE_ENV = 'test'                       // Set NODE_ENV to test globally
         MONGODB_URI = credentials('MONGO_URI_TEST') // Inject your test DB URI securely
+        SLACK_WEBHOOK_URL = credentials('slack-webhook') // <-- Add this line
     }
 
     stages {
@@ -47,6 +48,20 @@ pipeline {
     post {
         success {
             echo " CI pipeline completed successfully!"
+
+            script {
+                def slackMessage = """
+                {
+                  "text": "*Build #${env.BUILD_NUMBER}* of job '${env.JOB_NAME}' completed successfully!\\n Deployed to: https://dashboard.render.com/web/new?newUser=true"
+                }
+                """
+
+                sh """
+                    curl -X POST -H 'Content-type: application/json' \
+                    --data '${slackMessage}' \
+                    ${env.SLACK_WEBHOOK_URL}
+                """
+            }
         }
         failure {
             echo "Pipeline failed!"
