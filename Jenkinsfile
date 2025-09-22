@@ -2,15 +2,12 @@ pipeline {
     agent any
 
     tools {
-        nodejs "NodeJS"   // Make sure "NodeJS" is configured in Jenkins global tools
+        nodejs "NodeJS"  // Make sure this matches your Jenkins NodeJS tool name
     }
 
     environment {
-        MONGO_URI_PRODUCTION  = credentials('MONGO_URI_PRODUCTION')
-        MONGO_URI_DEVELOPMENT = credentials('MONGO_URI_DEVELOPMENT')
-        MONGO_URI_TEST        = credentials('MONGO_URI_TEST')
-        PORT = '5000'
-        NPM_CONFIG_LOGLEVEL = 'warn'   // Prevent npm from spamming logs
+        NODE_ENV = 'test'                       // Set NODE_ENV to test globally
+        MONGODB_URI = credentials('MONGO_URI_TEST') // Inject your test DB URI securely
     }
 
     stages {
@@ -22,60 +19,37 @@ pipeline {
 
         stage('Install Dependencies') {
             steps {
-                // Clean and reinstall dependencies to avoid hanging
-                sh '''
-                  rm -rf node_modules package-lock.json
-                  npm cache clean --force
-                  npm install --no-optional
-                '''
+                sh 'npm install'
             }
         }
 
-        stage('Debug Env Injection') {
-            steps {
-                script {
-                    echo " Environment variables injected"
-                    echo "   Current environment: PRODUCTION"
-                    // Don't print the Mongo URI directly for security
-                }
-            }
-        }
+        // Uncomment if you have a build step
+        // stage('Build') {
+        //     steps {
+        //         sh 'npm run build'
+        //     }
+        // }
 
         stage('Run Tests') {
             steps {
-                script {
-                    try {
-                        sh 'npm test'
-                    } catch (err) {
-                        echo " Tests failed!"
-                        error("Stopping pipeline because tests failed.")
-                    }
-                }
-            }
-        }
-
-        stage('Build') {
-            when {
-                expression { fileExists('package.json') && sh(script: "grep 'build' package.json || true", returnStdout: true).trim() }
-            }
-            steps {
-                sh 'npm run build'
+                echo "Running tests with NODE_ENV=${env.NODE_ENV}"
+                sh 'npm test'
             }
         }
 
         stage('Start Server') {
             steps {
-                echo "Skipping server start in CI - deployment handled by Render"
+                echo "Skipping start during CI - Render will handle deployment"
             }
         }
     }
 
     post {
         success {
-            echo "CI pipeline completed successfully!"
+            echo "✅ CI pipeline completed successfully!"
         }
         failure {
-            echo " Pipeline failed!"
+            echo "❌ Pipeline failed!"
         }
     }
 }

@@ -32,10 +32,12 @@ app.use(express.urlencoded({ extended: true }));
 app.use('/', index);
 app.use('/image', image);
 
-// Start server (only once!)
-const PORT = process.env.PORT || config.port || 5000;
-app.listen(PORT, () => {
+// Start server only if NOT in test mode
+if (process.env.NODE_ENV !== 'test') {
+  const PORT = process.env.PORT || config.port || 5000;
+  app.listen(PORT, () => {
     console.log(`🚀 Server running on http://localhost:${PORT}`);
-});
+  });
+}
 
 module.exports = app;

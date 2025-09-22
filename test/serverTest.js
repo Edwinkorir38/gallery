@@ -15,11 +15,19 @@ describe('Photos', function () {
     chai.request(server)
       .get('/')
       .end(function (err, res) {
-        res.should.have.status(200);
-        res.should.be.html;
-        // Instead of expecting an object, check HTML text
-        expect(res.text).to.include('Home Page'); 
+        if (err) return done(err);
+
+        res.should.have.status(200);  // Expect HTTP 200
+        res.should.be.html;           // Expect HTML response
+
+        // Match actual HTML content
+        expect(res.text).to.include('MILESTONE 2');
+        expect(res.text).to.include('Image Upload');
+
+        // Check that the images container exists
+        expect(res.text).to.match(/<div class="row">/);
+
         done();
       });
-  });
+});
 });
