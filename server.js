@@ -4,33 +4,36 @@ require('dotenv').config(); // Load environment variables
 const express = require('express');
 const mongoose = require('mongoose');
 const path = require('path');
-const config = require('./_config'); // updated to match your file name
+const config = require('./_config');
 
-// Import routes
-const index = require('./routes/index');
-const image = require('./routes/image');
+// Define routes
+let index = require('./routes/index');
+let image = require('./routes/image');
 
-// Initialize app
+// Initializing the app
 const app = express();
 
-// Environment (development / production / test)
-const env = process.env.NODE_ENV || 'development';
+// connecting the database
 
-// Connect to MongoDB
-mongoose.connect(config.mongoURI[env], {
-    useNewUrlParser: true,
-    useUnifiedTopology: true
-})
-.then(() => console.log(`Connected to MongoDB (${env})`))
-.catch(err => console.error('MongoDB connection error:', err));
-
-// Test connection
-const db = mongoose.connection;
-db.once('open', () => {
-    console.log('Database connection is open');
+const MONGODB_URI = process.env.MONGODB_URI || config.mongoURI[app.settings.env]
+mongoose.connect(MONGODB_URI, { useNewUrlParser: true, useUnifiedTopology: true  },(err)=>{
+    if (err) {
+        console.log(err)
+    }else{
+        console.log(`Connected to Database: ${MONGODB_URI}`)
+    }
 });
 
-// View engine
+// test if the database has connected successfully
+// let db = mongoose.connection;
+// db.once('open', ()=>{
+//     console.log('Database connected successfully')
+// })
+
+
+
+
+// View Engine
 app.set('view engine', 'ejs');
 
 // Static folder
@@ -44,7 +47,19 @@ app.use(express.urlencoded({ extended: true }));
 app.use('/', index);
 app.use('/image', image);
 
+
 // Start server
 app.listen(config.port, () => {
     console.log(`Server running on port ${config.port}`);
 });
+
+
+
+ 
+const PORT = process.env.PORT || 5000;
+app.listen(PORT,() =>{
+    console.log(`Server is listening at http://localhost:${PORT}`)
+});
+
+
+module.exports = app;
