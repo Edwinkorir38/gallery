@@ -12,7 +12,7 @@ Users can upload images, browse the gallery, and view individual images.
 - Responsive UI using Materialize CSS
 - Continuous Integration pipeline with Jenkins
 - Slack notifications for build status
-- Deployment on Railway with environment variables
+- Deployment on Railway with environment variables.
 
 ---
 
