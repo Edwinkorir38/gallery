@@ -4,6 +4,9 @@ pipeline {
     tools {
         nodejs "NodeJS"  // Make sure this matches your Jenkins NodeJS tool name
     }
+    triggers{
+        githubPush()
+    }
 
     environment {
         NODE_ENV = 'test'                       // Set NODE_ENV to test globally
