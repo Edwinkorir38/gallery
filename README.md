@@ -126,4 +126,4 @@ Ensure the following environment variables are configured before running tests:
 
 NODE_ENV=test
 
-MONGO_URI_TEST=<Your MongoDB Atlas test database URl> 
+MONGO_URI_TEST=<Your MongoDB Atlas test database URl>
